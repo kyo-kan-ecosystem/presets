@@ -14,13 +14,13 @@ class WorkflowPluginStep extends AbstractWorkflow {
      * @param {import("@kyo-kan/engine").ResolverParseContext} resolver  
      */
     getMemberExecutors(configure, resolver) {
-        const executorIDs = []
+        const flowDatas = []
         for (const executor of configure.executors) {
             const executorId = resolver.getExecutorId(executor)
-            executorIDs.push(executorId)
+            flowDatas.push(executorId)
 
         }
-        return executorIDs
+        return flowDatas
     }
     /**
      * @param {import("@kyo-kan/engine/protocol/types").Context} context
@@ -29,8 +29,22 @@ class WorkflowPluginStep extends AbstractWorkflow {
      */
     now(context, configure, request) {
         const state = this.getState(context, { index: 0, isSubworkFlow: false })
+        return { context, executor: configure.flowDatas[state.index] }
+
+
+
+
+
+    }
+    /**
+     * @param {import("@kyo-kan/engine/protocol/types").Context} context
+     * @param {import("@kyo-kan/engine/protocol/types").WorkflowConfigure<import("./protocol").StepExecutors>} configure
+     * @returns {import("@kyo-kan/engine/protocol/types").WorkflowStep}  
+     */
+    go(context, configure, request) {
+        const state = this.getState(context, { index: 0, isSubworkFlow: false })
         const nextIndex = state.index + 1
-        if (nextIndex >= configure.executorIDs.length) {
+        if (nextIndex >= configure.flowDatas.length) {
             if (state.isSubworkFlow === true) {
                 context.states.controll.setExecuteMode("returnFromSub")
 
