@@ -1,3 +1,2 @@
-import { WorkflowPluginConfigureReadable } from '@kyo-kan/engine/protocol/types'
-export type
-export type WorkflowStepReadable = Work
+export type StepExecutors = any[]
+export type StepState = { index: number, isSubworkFlow: boolean } 

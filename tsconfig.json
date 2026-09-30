@@ -1,0 +1,26 @@
+{
+    "include": [
+        "src/**/*",
+        "void/void.ts",
+        "interfacade/configure/protocol.d.ts",
+        "interfacade/configure/configure_path.cjs",
+        "presets/workflow/step/step.cjs"
+    ],
+    "compilerOptions": {
+        "lib": [
+            "esnext"
+        ],
+        "allowJs": true,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "incremental": true,
+        "checkJs": true,
+        "strict": true,
+        "module": "commonjs",
+        "types": [
+            "node",
+            "mocha",
+            "chai"
+        ]
+    },
+}

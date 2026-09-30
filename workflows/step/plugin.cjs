@@ -1,84 +1,71 @@
 
 
-
-
 const { AbstractWorkflow } = require("@kyo-kan/engine/protocol/classes")
 
+
+
 /**
- * @typedef {{step?:number}}
- */
-/**
- * @extends {AbstractWorkflow<>}
+ * @extends {AbstractWorkflow<import("./protocol").StepState>}
  */
 class WorkflowPluginStep extends AbstractWorkflow {
+
     /**
-     * 
-     * @param {any[]} configures
-     * @param {WorkflowContext} context 
-     * @returns {ApplyResponse}  
+     * @param {import("@kyo-kan/engine/protocol/types").WorkflowConfigureInPlace} configure
+     * @param {import("@kyo-kan/engine").ResolverParseContext} resolver  
      */
-    applyConfigure(name, configures, context) {
-        let indexKey = 0
-        /**
-         * @type {WorkflowData}
-         */
-        const workflowData = {
-            steps: Array(configures.length)
+    getMemberExecutors(configure, resolver) {
+        const executorIDs = []
+        for (const executor of configure.executors) {
+            const executorId = resolver.getExecutorId(executor)
+            executorIDs.push(executorId)
+
         }
-        const result = context.set(name, workflowData)
-        /** 
-        * @type {ApplyResponse}
-        */
-        const response = Object.assign(result, {
+        return executorIDs
+    }
+    /**
+     * @param {import("@kyo-kan/engine/protocol/types").Context} context
+     * @param {import("@kyo-kan/engine/protocol/types").WorkflowConfigure<import("./protocol").StepExecutors>} configure
+     * @returns {import("@kyo-kan/engine/protocol/types").WorkflowStep}  
+     */
+    now(context, configure, request) {
+        const state = this.getState(context, { index: 0, isSubworkFlow: false })
+        const nextIndex = state.index + 1
+        if (nextIndex >= configure.executorIDs.length) {
+            if (state.isSubworkFlow === true) {
+                context.states.controll.setExecuteMode("returnFromSub")
 
-            configures: []
-        })
-
-        for (const configure of configures) {
-            /**
-             * @type {UnitConfigure}
-             */
-            const unitConfigure = {
-                configure,
-                data: indexKey
             }
-            response.configures.push(unitConfigure)
-            indexKey += 1
+            else {
+                context.states.controll.setExecuteMode("end")
+            }
+
+
         }
-        return response
+
+        /**
+         * @type {import("@kyo-kan/engine/protocol/types").WorkflowStep}
+         */
+        const result = { context, executor: configure.executors[state.index] }
+        state.index = nextIndex
+        this.setState(context, state)
+        return result
 
 
 
     }
     /**
-    * 
-    * @param {number} data
-    * @param {RepositryContext} context 
-    *  
-    */
-    addWorkflowUnit(name, data, unitId, context) {
-        /**
-         * @type {WorkflowData}
-         */
-        const workflowData = context.get(name)
-        workflowData.steps[data] = unitId
-        context.set(name, workflowData)
+     * @param {import("@kyo-kan/engine/protocol/types").Context} context
+     * @param {import("@kyo-kan/engine/protocol/types").WorkflowConfigure<import("./protocol").StepExecutors>} configure
+     *   
+     */
+    enterAsSubworkflow(context, configure, request) {
+        this.setState(context, { index: 0, isSubworkFlow: true })
 
     }
-    resolve() {
 
-    }
-    exec() {
-
-    }
 
 }
 
-/**
- * 
- * @param {*} hoge 
- * @returns 
- */
-function t(hoge) {
-    return hoge
-} 
+module.exports = { WorkflowPluginStep }
+
+
