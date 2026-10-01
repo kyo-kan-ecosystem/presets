@@ -3,14 +3,14 @@ const { AbstractWorkflow } = require("@kyo-kan/engine/protocol/classes")
 
 
 /**
- * @extends {AbstractWorkflow<import("./protocol").OptionalState>}
+ * @extends {AbstractWorkflow<import("./protocol").OptionalState, import("./protocol").SelectedValue>}
  */
-class WorkflowPluginSelect extends AbstractWorkflow {
+class WorkflowPluginSelectExecutor extends AbstractWorkflow {
     /**
      * @param {import("@kyo-kan/engine/protocol/types").WorkflowConfigureInPlace<import("./protocol").OptinalExecutors>} configure
      * @param {import("@kyo-kan/engine").ResolverParseContext} resolver  
      */
-    getMemberExecutors(configure, resolver) {
+    getFlowDatas(configure, resolver) {
         const flowDatas = {}
         for (const [selectKey, executor] of Object.entries(configure.flowDatas)) {
             const executorId = resolver.getExecutorId(executor)
@@ -25,9 +25,9 @@ class WorkflowPluginSelect extends AbstractWorkflow {
     * @returns {import("@kyo-kan/engine/protocol/types").WorkflowStep}  
     */
     now(context, configure, request) {
-        const state = this.getState(context)
+        const selectedValue = this.getInitState(context)
 
-        const executor = configure.flowDatas[state.selectedValue]
+        const executor = configure.flowDatas[selectedValu]
 
 
         return { context, executor }
@@ -45,7 +45,8 @@ class WorkflowPluginSelect extends AbstractWorkflow {
             return { context }
 
         }
-        const executor = configure.flowDatas[state.selectedValue]
+        const selectedValue = this.getInitState(context)
+        const executor = configure.flowDatas[selectedValue]
 
 
         return { context, executor }
@@ -64,3 +65,5 @@ class WorkflowPluginSelect extends AbstractWorkflow {
 
     }
 }
+
+module.exports = { WorkflowPluginSelectExecutor }
