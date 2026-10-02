@@ -11,6 +11,9 @@ class WorkflowPluginSelectExecutor extends AbstractWorkflow {
      * @param {import("@kyo-kan/engine").ResolverParseContext} resolver  
      */
     getFlowDatas(configure, resolver) {
+        /**
+         * @type {any}
+         */
         const flowDatas = {}
         for (const [selectKey, executor] of Object.entries(configure.flowDatas)) {
             const executorId = resolver.getExecutorId(executor)
@@ -20,14 +23,15 @@ class WorkflowPluginSelectExecutor extends AbstractWorkflow {
         return flowDatas
     }
     /**
-    * @param {import("@kyo-kan/engine/protocol/types").Context} context
-    * @param {import("@kyo-kan/engine/protocol/types").WorkflowConfigure<import("./protocol").OptinalExecutors>} configure
-    * @returns {import("@kyo-kan/engine/protocol/types").WorkflowStep}  
-    */
+     * @param {import("@kyo-kan/engine/protocol/types").Context} context
+     * @param {import("@kyo-kan/engine/protocol/types").WorkflowConfigure<import("./protocol").OptinalExecutors>} configure
+     * @returns {import("@kyo-kan/engine/protocol/types").WorkflowStep}
+     * @param {undefined} request
+     */
     now(context, configure, request) {
         const selectedValue = this.getInitState(context)
 
-        const executor = configure.flowDatas[selectedValu]
+        const executor = configure.flowDatas[selectedValue]
 
 
         return { context, executor }
@@ -35,11 +39,12 @@ class WorkflowPluginSelectExecutor extends AbstractWorkflow {
     /**
     * @param {import("@kyo-kan/engine/protocol/types").Context} context
     * @param {import("@kyo-kan/engine/protocol/types").WorkflowConfigure<import("./protocol").OptinalExecutors>} configure
+    * @param {*} request 
     * @returns {import("@kyo-kan/engine/protocol/types").WorkflowStep}  
     */
     go(context, configure, request) {
 
-        const state = this.getState(context)
+        const state = this.getState(context, { isExecuted: false })
         if (state.isExecuted === true) {
             context.states.controll.setExecuteMode("returnFromSub")
             return { context }
@@ -55,13 +60,14 @@ class WorkflowPluginSelectExecutor extends AbstractWorkflow {
     }
     /**
      * @param {import("@kyo-kan/engine/protocol/types").Context} context
-     * @param {import("@kyo-kan/engine/protocol/types").WorkflowConfigure<import("./protocol").StepExecutors>} configure
-     *   
-    */
+     * @param {import("@kyo-kan/engine/protocol/types").WorkflowConfigure<import("./protocol").OptinalExecutors>} configure
+     * @param {any} request
+     */
     enterAsSubworkflow(context, configure, request) {
 
 
         this.setState(context, { isExecuted: false }, true)
+        return { context }
 
     }
 }
