@@ -1,10 +1,6 @@
 {
     "include": [
-        "src/**/*",
-        "void/void.ts",
-        "interfacade/configure/protocol.d.ts",
-        "interfacade/configure/configure_path.cjs",
-        "presets/workflow/step/step.cjs"
+        "**/*",
     ],
     "compilerOptions": {
         "lib": [

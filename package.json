@@ -12,5 +12,13 @@
   "dependencies": {
     "@kyo-kan/engine": "^1.0.0",
     "handlebars": "^4.7.9"
+  },
+  "devDependencies": {
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/sinon": "^22.0.0",
+    "chai": "^6.3.0",
+    "mocha": "^12.0.3",
+    "sinon": "^22.1.0"
   }
 }
