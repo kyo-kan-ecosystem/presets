@@ -12,7 +12,7 @@ const DEFUALT_OPTION = {
 class ExecutorTemplateHadlebars {
     /**
      * 
-     * @param {import('@kyo-kan/engine/protocol/types').Context<any, import('../../api/functions/context_id/protocol').MaybeApiContextId} context
+     * @param {import('@kyo-kan/engine/protocol/types').Context<any, import('../../../api/functions/context_id/protocol').MaybeApiContextId} context
      * @param {*} reuest
      * @param {import('./protocol').ExecutorTemplateHandlebarsOption} options 
      *   
