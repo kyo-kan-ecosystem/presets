@@ -116,6 +116,8 @@ class WorkflowPluginConcurrentExecutor extends AbstractWorkflow {
         if (taskState === ProcessingState) {
             branchPointState.waitingTaskCount -= 1
             branchPointState.taskStateMap[branchId] = CompleteState
+            const bordFromBase = context.bords.getBranchFrom()
+            bordFromBase.updateWorkflow(context.bords.getCurrentWorkflow())
             if (branchPointState.waitingTaskCount === 0) {
                 returnContext = context.fork(branchPointId)
                 if (branchPointState.isSubWorkflow === true) {
